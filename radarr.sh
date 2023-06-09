@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-tool='Radarr'
+servarr='Radarr'
 
 if [[ -z ${radarr_eventtype} ]]; then
 	radarr_eventtype='no event'
@@ -35,5 +35,5 @@ for XUSER in "${XUSERS[@]}"; do
 	sudo -u ${NAME[0]} DISPLAY=${DISPLAY} \
 						DBUS_SESSION_BUS_ADDRESS=${DBUS_ADDRESS} \
 						PATH=${PATH} \
-						notify-send -a "${tool}" -u 'normal' -i "/usr/lib/${tool,,}/bin/UI/Content/Images/logo.svg" -- "${radarr_eventtype}" "${message}"
+						notify-send -a "${servarr}" -u 'normal' -i "/usr/lib/${servarr,,}/bin/UI/Content/Images/logo.svg" -- "${radarr_eventtype}" "${message}"
 done
