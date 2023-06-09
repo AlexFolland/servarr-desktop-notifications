@@ -11,29 +11,35 @@ bytesToHumanReadable() {
 }
 
 servarr='Radarr'
+eventtype="${servarr,,}_eventtype"
+title="${servarr,,}_movie_title"
+quality="${servarr,,}_movie_quality"
+size="${servarr,,}_release_size"
+health_issue_message="${servarr,,}_health_issue_message"
+update_message="${servarr,,}_update_message"
 
-if [[ -z ${radarr_eventtype} ]]; then
-	radarr_eventtype='no event'
+if [[ -z "${!eventtype}" ]]; then
+	eventtype='no event'
 fi
 
 message=""
 
-if [[ ! -z ${radarr_movie_title} ]]; then
+if [[ ! -z "${!title}" ]]; then
 	if [[ ! -z ${radarr_movie_year} ]]; then
 		message+="${radarr_movie_year} - "
 	fi
-	message+="${radarr_movie_title}"
-	if [[ ! -z ${radarr_movie_quality} ]]; then
-		message+=" - ${radarr_movie_quality}"
+	message+="${!title}"
+	if [[ ! -z "${!quality}" ]]; then
+		message+=" - ${!quality}"
 	fi
-	if [[ ! -z ${radarr_release_size} ]]; then
-		radarr_release_size=$(bytesToHumanReadable ${radarr_release_size})
-		message+=" - ${radarr_release_size}"
+	if [[ ! -z "${!size}" ]]; then
+		humanReadableSize=$(bytesToHumanReadable ${!size})
+		message+=" - ${humanReadableSize}"
 	fi
-elif [[ ! -z ${radarr_health_issue_message} ]]; then
-	message+="${radarr_health_issue_message}"
-elif [[ ! -z ${radarr_update_message} ]]; then
-	message+="${radarr_update_message}"
+elif [[ ! -z "${!health_issue_message}" ]]; then
+	message+="${!health_issue_message}"
+elif [[ ! -z "${!update_message}" ]]; then
+	message+="${!update_message}"
 fi
 
 PATH=/usr/bin:/bin
@@ -47,5 +53,5 @@ for XUSER in "${XUSERS[@]}"; do
 		DISPLAY=${DISPLAY} \
 		DBUS_SESSION_BUS_ADDRESS=${DBUS_ADDRESS} \
 		PATH=${PATH} \
-		notify-send -a "${servarr}" -u 'normal' -i "/usr/lib/${servarr,,}/bin/UI/Content/Images/logo.svg" -- "${radarr_eventtype}" "${message}"
+		notify-send -a "${servarr}" -u 'normal' -i "/usr/lib/${servarr,,}/bin/UI/Content/Images/logo.svg" -- "${!eventtype}" "${message}"
 done

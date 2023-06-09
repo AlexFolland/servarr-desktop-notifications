@@ -7,36 +7,42 @@ bytesToHumanReadable() {
 		i=$((i / 1024))
 		s=$((s + 1))
 	done
-	echo "$i$d ${S[$s]}"
+	echo "${i}${d} ${S[$s]}"
 }
 
 servarr='Sonarr'
+eventtype="${servarr,,}_eventtype"
+title="${servarr,,}_series_title"
+quality="${servarr,,}_episodefile_quality"
+size="${servarr,,}_release_size"
+health_issue_message="${servarr,,}_health_issue_message"
+update_message="${servarr,,}_update_message"
 
-if [[ -z ${sonarr_eventtype} ]]; then
-	sonarr_eventtype='no event'
+if [[ -z "${!eventtype}" ]]; then
+	eventtype='no event'
 fi
 
 message=""
 
-if [[ ! -z ${sonarr_series_title} ]]; then
-	message+="${sonarr_series_title}"
+if [[ ! -z "${!title}" ]]; then
+	message+="${!title}"
 	if [[ ! -z ${sonarr_episodefile_seasonnumber} ]]; then
 		message+=" - S${sonarr_episodefile_seasonnumber}"
 		if [[ ! -z ${sonarr_episodefile_episodenumbers} ]]; then
 			message+="E${sonarr_episodefile_episodenumbers}"
 		fi
 	fi
-	if [[ ! -z ${sonarr_episodefile_quality} ]]; then
-		message+=" - ${sonarr_episodefile_quality}"
+	if [[ ! -z "${!quality}" ]]; then
+		message+=" - ${!quality}"
 	fi
-	if [[ ! -z ${sonarr_release_size} ]]; then
-		sonarr_release_size=$(bytesToHumanReadable ${sonarr_release_size})
-		message+=" - ${sonarr_release_size}"
+	if [[ ! -z "${!size}" ]]; then
+		humanReadableSize=$(bytesToHumanReadable ${!size})
+		message+=" - ${humanReadableSize}"
 	fi
-elif [[ ! -z ${sonarr_health_issue_message} ]]; then
-	message+="${sonarr_health_issue_message}"
-elif [[ ! -z ${sonarr_update_message} ]]; then
-	message+="${sonarr_update_message}"
+elif [[ ! -z "${!health_issue_message}" ]]; then
+	message+="${!health_issue_message}"
+elif [[ ! -z "${!update_message}" ]]; then
+	message+="${!update_message}"
 fi
 
 PATH=/usr/bin:/bin
@@ -50,5 +56,5 @@ for XUSER in "${XUSERS[@]}"; do
 		DISPLAY=${DISPLAY} \
 		DBUS_SESSION_BUS_ADDRESS=${DBUS_ADDRESS} \
 		PATH=${PATH} \
-		notify-send -a "${servarr}" -u 'normal' -i "/usr/lib/${servarr,,}/bin/UI/Content/Images/logo.svg" -- "${sonarr_eventtype}" "${message}"
+		notify-send -a "${servarr}" -u 'normal' -i "/usr/lib/${servarr,,}/bin/UI/Content/Images/logo.svg" -- "${!eventtype}" "${message}"
 done
